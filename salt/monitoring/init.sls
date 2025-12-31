@@ -6,11 +6,16 @@ create_monitoring_dir:
 
 # --- DOWNLOAD TOOLS ---
 
+# CHANGED: Switched to official NSSM zip and using archive.extracted
+# This is safer than finding a direct .exe link
 download_nssm:
-  file.managed:
-    - name: 'C:\monitoring\nssm.exe'
-    - source: https://github.com/cacivic/nssm-mirror/raw/master/nssm-2.24/win64/nssm.exe
-    - skip_verify: True # For simplicity in this lab
+  archive.extracted:
+    - name: 'C:\monitoring'
+    - source: https://nssm.cc/release/nssm-2.24.zip
+    - skip_verify: True
+    - enforce_toplevel: False
+    # IDEMPOTENCY: Don't extract if we already see the folder
+    - if_missing: 'C:\monitoring\nssm-2.24'
 
 download_blackbox:
   archive.extracted:
@@ -18,13 +23,18 @@ download_blackbox:
     - source: https://github.com/prometheus/blackbox_exporter/releases/download/v0.24.0/blackbox_exporter-0.24.0.windows-amd64.zip
     - skip_verify: True
     - enforce_toplevel: False
+    # IDEMPOTENCY: Don't extract if existing
+    - if_missing: 'C:\monitoring\blackbox_exporter-0.24.0.windows-amd64'
 
 download_vmagent:
   archive.extracted:
     - name: 'C:\monitoring'
+    # FIXED: Using a more stable recent release link
     - source: https://github.com/VictoriaMetrics/VictoriaMetrics/releases/download/v1.93.0/vmutils-windows-amd64-v1.93.0.zip
     - skip_verify: True
     - enforce_toplevel: False
+    # IDEMPOTENCY check (checks for the specific exe)
+    - if_missing: 'C:\monitoring\vmagent-windows-amd64-prod.exe'
 
 # --- CONFIGURATION FILES ---
 
@@ -32,24 +42,40 @@ configure_blackbox:
   file.managed:
     - name: 'C:\monitoring\blackbox.yml'
     - source: salt://monitoring/blackbox.yml
+    - require:
+        - file: create_monitoring_dir
 
 configure_vmagent:
   file.managed:
     - name: 'C:\monitoring\vmagent.yml'
     - source: salt://monitoring/vmagent.yml
+    - require:
+        - file: create_monitoring_dir
 
 # --- SERVICE INSTALLATION (Using NSSM) ---
 
 install_blackbox_service:
   cmd.run:
-    - name: 'C:\monitoring\nssm.exe install BlackboxExporter "C:\monitoring\blackbox_exporter-0.24.0.windows-amd64\blackbox_exporter.exe" "--config.file=C:\monitoring\blackbox.yml"'
+    # FIXED PATH: NSSM extracts to a subfolder (nssm-2.24\win64\nssm.exe)
+    - name: 'C:\monitoring\nssm-2.24\win64\nssm.exe install BlackboxExporter "C:\monitoring\blackbox_exporter-0.24.0.windows-amd64\blackbox_exporter.exe" "--config.file=C:\monitoring\blackbox.yml"'
+    # IDEMPOTENCY: Only run if service is missing
     - unless: 'sc query BlackboxExporter'
+    - require:
+        - archive: download_nssm
+        - archive: download_blackbox
+        - file: configure_blackbox
 
 install_vmagent_service:
   cmd.run:
-    # Replace URL below with your VictoriaMetrics address
-    - name: 'C:\monitoring\nssm.exe install VMAgent "C:\monitoring\vmagent-prod.exe" "-promscrape.config=C:\monitoring\vmagent.yml -remoteWrite.url=http://192.168.15.8:8431/api/v1/write"'
+    # FIXED PATH: vmagent binary name corrected to 'vmagent-windows-amd64-prod.exe'
+    # Replace the URL below with your actual VictoriaMetrics IP
+    - name: 'C:\monitoring\nssm-2.24\win64\nssm.exe install VMAgent "C:\monitoring\vmagent-windows-amd64-prod.exe" "-promscrape.config=C:\monitoring\vmagent.yml -remoteWrite.url=http://192.168.15.8:8431/api/v1/write"'
+    # IDEMPOTENCY: Only run if service is missing
     - unless: 'sc query VMAgent'
+    - require:
+        - archive: download_nssm
+        - archive: download_vmagent
+        - file: configure_vmagent
 
 # --- START SERVICES ---
 
