@@ -1,3 +1,3 @@
 base:
-  'windows-agent*':  # Targets any minion starting with 'windows-agent'
+  'windows-agent-01':  # Targets any minion starting with 'windows-agent'
     - monitoring
