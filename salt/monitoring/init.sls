@@ -83,12 +83,20 @@ start_blackbox:
   service.running:
     - name: BlackboxExporter
     - enable: True
+    # "require" ensures the service is installed before we try to start it
     - require:
       - cmd: install_blackbox_service
+    # "watch" ensures we restart if the config file changes
+    - watch:
+      - file: configure_blackbox
 
 start_vmagent:
   service.running:
     - name: VMAgent
     - enable: True
+    # "require" ensures the service is installed before we try to start it
     - require:
       - cmd: install_vmagent_service
+    # "watch" ensures we restart if the config file changes
+    - watch:
+      - file: configure_vmagent

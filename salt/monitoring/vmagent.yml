@@ -9,6 +9,8 @@ scrape_configs:
     static_configs:
       - targets:
         - 1.1.1.1          # The target we want to ping
+        - 8.8.8.8
+        - 192.168.15.8
     relabel_configs:
       - source_labels: [__address__]
         target_label: __param_target
@@ -16,3 +18,5 @@ scrape_configs:
         target_label: instance
       - target_label: __address__
         replacement: 127.0.0.1:9115  # The local Blackbox Exporter address
+      - target_label: test_label
+        replacement: test_value
