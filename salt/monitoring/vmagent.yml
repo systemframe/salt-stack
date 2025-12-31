@@ -19,4 +19,7 @@ scrape_configs:
       - target_label: __address__
         replacement: 127.0.0.1:9115  # The local Blackbox Exporter address
       - target_label: test_label
-        replacement: test_value
+        replacement: test_value 
+      - target_label: another_test_label
+        replacement: another_test_value
+      
