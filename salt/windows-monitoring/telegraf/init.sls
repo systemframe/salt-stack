@@ -70,17 +70,25 @@ shutdown_event_log_script:
     - require:
       - file: telegraf_directories
 
+# Uninstall broken Telegraf service if it exists but isn't startable
+uninstall_broken_telegraf_service:
+  cmd.run:
+    - name: '& "C:\Program Files\telegraf\telegraf-{{ version }}\telegraf.exe" --service uninstall'
+    - shell: powershell
+    - onlyif: 'if ((Get-Service -Name telegraf -ErrorAction SilentlyContinue) -and -not (Get-Service -Name telegraf).CanStop) { exit 0 } else { exit 1 }'
+    - require:
+      - archive: download_telegraf
+
 # Install Telegraf as Windows service
 install_telegraf_service:
   cmd.run:
-    - name: >
-        "C:\Program Files\telegraf\telegraf-{{ version }}\telegraf.exe"
-        --service install
-        --config "C:\Program Files\telegraf\telegraf.conf"
-    - unless: sc query telegraf
+    - name: '& "C:\Program Files\telegraf\telegraf-{{ version }}\telegraf.exe" --service install --config "C:\Program Files\telegraf\telegraf.conf"'
+    - shell: powershell
+    - unless: '(Get-Service -Name telegraf -ErrorAction SilentlyContinue) -and (Get-Service -Name telegraf).Status'
     - require:
       - archive: download_telegraf
       - file: telegraf_config
+      - cmd: uninstall_broken_telegraf_service
 
 # Ensure Telegraf service is running
 telegraf_service:
