@@ -100,3 +100,11 @@ start_vmagent:
     # "watch" ensures we restart if the config file changes
     - watch:
       - file: configure_vmagent
+
+configure_auto_updates:
+  schedule.present:
+    - name: maintain_compliance
+    - function: state.apply
+    - minutes: 1            # Run every 1 minute (increase for Prod)
+    - splay: 5              # Add 5s random delay (prevents traffic spikes if you had 1000 minions)
+    - return_job: False     # Don't flood the Master's job log with success messages
