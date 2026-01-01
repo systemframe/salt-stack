@@ -1,7 +1,5 @@
 base:
   # Existing monitoring targets (Blackbox + VMAgent)
-  'windows-agent*':
-    - monitoring
 
   # Windows Monitoring (Telegraf + optional Windows Exporter)
   # Target by OS grain - all Windows machines

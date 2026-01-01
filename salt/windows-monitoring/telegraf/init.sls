@@ -13,24 +13,23 @@ telegraf_directories:
       - {{ install_dir }}\Telegraf
       - {{ install_dir }}\Telegraf\Scripts
       - {{ install_dir }}\Telegraf\Output
-      - C:\Program Files\telegraf
     - makedirs: True
 
 # Download Telegraf
 download_telegraf:
   archive.extracted:
-    - name: C:\Program Files\telegraf
+    - name: {{ install_dir }}\Telegraf
     - source: https://dl.influxdata.com/telegraf/releases/telegraf-{{ version }}_windows_amd64.zip
     - skip_verify: True
     - enforce_toplevel: False
-    - if_missing: C:\Program Files\telegraf\telegraf-{{ version }}\telegraf.exe
+    - if_missing: {{ install_dir }}\Telegraf\telegraf-{{ version }}\telegraf.exe
     - require:
       - file: telegraf_directories
 
 # Deploy Telegraf configuration
 telegraf_config:
   file.managed:
-    - name: C:\Program Files\telegraf\telegraf.conf
+    - name: {{ install_dir }}\Telegraf\telegraf.conf
     - source: salt://windows-monitoring/files/telegraf.conf.jinja
     - template: jinja
     - require:
@@ -73,7 +72,7 @@ shutdown_event_log_script:
 # Uninstall broken Telegraf service if it exists but isn't startable
 uninstall_broken_telegraf_service:
   cmd.run:
-    - name: '& "C:\Program Files\telegraf\telegraf-{{ version }}\telegraf.exe" --service uninstall'
+    - name: '& "{{ install_dir }}\Telegraf\telegraf-{{ version }}\telegraf.exe" --service uninstall'
     - shell: powershell
     - onlyif: 'if ((Get-Service -Name telegraf -ErrorAction SilentlyContinue) -and -not (Get-Service -Name telegraf).CanStop) { exit 0 } else { exit 1 }'
     - require:
@@ -82,7 +81,7 @@ uninstall_broken_telegraf_service:
 # Install Telegraf as Windows service
 install_telegraf_service:
   cmd.run:
-    - name: '& "C:\Program Files\telegraf\telegraf-{{ version }}\telegraf.exe" --service install --config "C:\Program Files\telegraf\telegraf.conf"'
+    - name: '& "{{ install_dir }}\Telegraf\telegraf-{{ version }}\telegraf.exe" --service install --config "{{ install_dir }}\Telegraf\telegraf.conf"'
     - shell: powershell
     - unless: '(Get-Service -Name telegraf -ErrorAction SilentlyContinue) -and (Get-Service -Name telegraf).Status'
     - require:
