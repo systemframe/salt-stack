@@ -1,6 +1,4 @@
-# Global monitoring defaults
-# These values are inherited by all minions and can be overridden
-# in customer-specific or node-specific pillars
+#!yaml|gpg
 
 monitoring:
   # Installation directory
