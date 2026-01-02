@@ -14,10 +14,6 @@
 {%- set telegraf_collectors = salt['pillar.get']('monitoring:telegraf_collectors', []) -%}
 {%- set monitor_services = salt['pillar.get']('monitoring:monitor_services', []) -%}
 {%- set log_level = salt['pillar.get']('monitoring:log_level', 'info') -%}
-# Telegraf Configuration
-#
-# Managed by SaltStack - Do not edit manually
-
 # Global tags applied to all metrics
 [global_tags]
   systemframe_id = "{{ systemframe_id }}"

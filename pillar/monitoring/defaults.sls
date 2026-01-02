@@ -5,7 +5,7 @@
 monitoring:
   # Installation directory
   install_dir: 'C:\Monitoring'
-
+  deploy_version: tests
   # VictoriaMetrics configuration
   vmetrics:
     # Global credentials (fallback if not specified per-cluster)
