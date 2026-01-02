@@ -10,7 +10,26 @@ monitoring:
   vmetrics:
     # Global credentials (fallback if not specified per-cluster)
     user: vmetricsuser
-    password: changeme
+    password: |
+      -----BEGIN PGP MESSAGE-----
+
+      hQIMA5z+pdumeBvpAQ/+KESq6TaeW7bvrwyK1qkOkzMXAsx9m2dPbDM2rK92Homn
+      IiOwsxSRw+T4FCZgRjXDKMLyE84oXNSf8JccwFU8g5tyb5LUeZIfSwHQM5q4tC+w
+      9LD4RRvz2JbHwSGoUnNPMwr9wkSglNTIXzcLn8bqOFrYEaUxXfSaatnXKd7Ev7z2
+      oozh6Udr3eL70pKruIDttt54B62U2LDY98mCfMql2Nu+mNZZIlM1cGRZ9MD+2t84
+      CAHOQdjolGWKroA8Q2TVhxMYB8HudJfcv+Iq8le2ZqHEQiXwQeKbKe1oPeGPnIRm
+      wGQOkB1dWZUa4aSo+VMbP352zuGilliClRavEAZV5MSbu14A2iMFiPAk/r10Z3uW
+      9aBJ0KlbLrxOWphRAOnynF5vQI6XtsPedzMnOzVkduSmFzxRgyVxWa9gFBQCw0rj
+      ExF/h5YZJak9cX24vG0ia0mJyeyoOp3h4gQo1BhHwAIODGW+9dXqYE545uy/+y6a
+      cYx5xCopi0XrTXlBkg4Dfqem4KK+Z6z8iwGKGr0c2wheSq76EtWHCZ+YZkqZJQcz
+      zWQeLh14rZwJNfgUBHRPb1el9a+iARFCV2wyn5SrzDkLb2tUeScE27W52y6JqaCF
+      VuxGeZLx0grSE6IilGfrTeyztXrfgEAZYw9XSFKCN2NcAhO9J6CJMC/5YMBoNQfU
+      bQEJAhDJcMnUxui14kHHt8XGVraDEWo9ujtjVNgANgnMs0FMxEhlm/EpkQj6xDno
+      nUuFNMuWcCPesPe81iPkmWDHs8XtJfs90SnZDrQ5fGvFcRGPUfUzyGO3+FEV9LlU
+      eORc6FzyY6ALnmmkd4Q=
+      =518w
+      -----END PGP MESSAGE-----
+
     prefix_url: '/insert/0/prometheus/api/v1/write'
 
     # Cluster list with collapse merge support
