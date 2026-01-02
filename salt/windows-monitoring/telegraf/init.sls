@@ -83,7 +83,8 @@ install_telegraf_service:
   cmd.run:
     - name: '& "{{ install_dir }}\Telegraf\telegraf-{{ version }}\telegraf.exe" --service install --config "{{ install_dir }}\Telegraf\telegraf.conf"'
     - shell: powershell
-    - unless: '(Get-Service -Name telegraf -ErrorAction SilentlyContinue) -and (Get-Service -Name telegraf).Status'
+    # FIX: Explicitly exit with 0 (skip) if service exists, or 1 (run) if it doesn't.
+    - unless: 'if ((Get-Service -Name telegraf -ErrorAction SilentlyContinue) -and (Get-Service -Name telegraf).Status) { exit 0 } else { exit 1 }'
     - require:
       - archive: download_telegraf
       - file: telegraf_config
