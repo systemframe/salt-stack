@@ -2,7 +2,7 @@
 
 monitoring:
   # Installation directory
-  install_dir: 'C:\Monitoring'
+  install_dir: 'C:\\Monitoring'
   deploy_version: tests
   # VictoriaMetrics configuration
   vmetrics:
