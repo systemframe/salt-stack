@@ -13,7 +13,7 @@
 {%- set ip_addr = grains.get('ipv4', ['127.0.0.1'])[0] -%}
 {%- set telegraf_collectors = salt['pillar.get']('monitoring:telegraf_collectors', []) -%}
 {%- set monitor_services = salt['pillar.get']('monitoring:monitor_services', []) -%}
-{%- set log_level = salt['pillar.get']('monitoring:log_level', 'info') -%}
+{%- set log_level = salt['pillar.get']('monitoring:log_level', 'debug') -%}
 # Global tags applied to all metrics
 [global_tags]
   systemframe_id = "{{ systemframe_id }}"
@@ -36,10 +36,10 @@
   precision = "0s"
 {%- if log_level == 'debug' %}
   debug = true
+  logformat = true
 {%- else %}
   quiet = true
 {%- endif %}
-  logformat = "text"
   logfile = "{{ install_dir }}\\Telegraf\\telegraf.log"
 
 ###############################################################################
